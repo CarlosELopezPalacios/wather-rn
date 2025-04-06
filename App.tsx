@@ -1,5 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Layout } from './src/Layout';
 import "./global.css"
 import { Provider } from 'react-redux';

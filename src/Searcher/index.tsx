@@ -4,16 +4,17 @@ import { MagnifyingGlassIcon } from 'react-native-heroicons/outline'
 import { MapPinIcon } from 'react-native-heroicons/solid'
 
 import { theme } from "../theme/intex";
+import { type Location } from "../api/getLocationsEndpoint";
 
 interface SearcherProps {
   onChange: (value: string) => void;
   searchValue: string;
-  handleLocation: (location: string) => void;
+  handleLocation: (location: Location) => void;
+  locations: Array<Location>
 }
 
-export const Searcher: FC<SearcherProps> = ({ onChange = () => {}, searchValue = '', handleLocation = () => {} }): ReactElement => {
+export const Searcher: FC<SearcherProps> = ({ onChange = () => {}, searchValue = '', handleLocation = () => {}, locations = [] }): ReactElement => {
   const [showSearch, setShowSearch] = useState<boolean>(false);
-  const [locations, setLocations] = useState<Array<string>>(['1', '2', '3']);
   return (
     <View className="mx-4 relative z-50" style={{ height: '7%' }}>
       <View
@@ -24,7 +25,7 @@ export const Searcher: FC<SearcherProps> = ({ onChange = () => {}, searchValue =
       >
         {showSearch ? (
           <TextInput
-            placeholder="Search a pokemon"
+            placeholder="Search a city"
             placeholderTextColor="lightgray"
             className="pl-6 h-10 flex-1 text-base text-white"
             onChangeText={onChange}
@@ -44,21 +45,24 @@ export const Searcher: FC<SearcherProps> = ({ onChange = () => {}, searchValue =
           <View className="absolute w-full bg-gray-300 top-16 rounded-3xl">
             <FlatList
               data={locations}
-              keyExtractor={(item) => item}
+              keyExtractor={(item) => item.id.toString()}
               renderItem={({ item, index }) => {
                 const borderClassName = index + 1 !== locations.length ? 'border-b-2 border-b-gray-400' : ''
                 return (
                   <TouchableOpacity
                     className={`flex-row items-center border-0 p-3 px-4 mb-1 ${borderClassName}`}
-                    onPress={() => handleLocation(item)}
+                    onPress={() => {
+                      setShowSearch(false);
+                      handleLocation(item);
+                    }}
                   >
                     <MapPinIcon size={20} color="gray" />
                     <Text
                       className="text-black text-lg ml-2"
-                    >London, United Kingdom</Text>
+                    >{item?.name}, {item?.country}</Text>
                   </TouchableOpacity>
                 );
-            }}
+              }}
             />
           </View>
         ) : null

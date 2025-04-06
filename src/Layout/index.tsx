@@ -2,16 +2,43 @@ import { useDeferredValue, useState, type FC, type PropsWithChildren, type React
 import { Image, SafeAreaView, StatusBar, View } from "react-native";
 import { Searcher } from "../Searcher";
 import { Forecast } from "../Forecast";
+import { type Location, useGetLocationsQuery } from "../api/getLocationsEndpoint";
+import { useGetWeatherQuery } from "../api/getWeatherEndpoint";
 
 export const Layout: FC<PropsWithChildren> = ({ children }): ReactElement => {
   const [searchValue, setSearchValue] = useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
   const deferredSearchValue = useDeferredValue<string>(searchValue);
+
+  const getWeatherQuery = useGetWeatherQuery(
+    {
+      city: selectedLocation,
+    },
+    {
+      skip: !selectedLocation,
+      refetchOnMountOrArgChange: true,
+    },
+  );
+
+  const getLocationsQuery = useGetLocationsQuery(
+    { city: deferredSearchValue },
+    {
+      skip: deferredSearchValue.length < 2,
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+  const { data } = getLocationsQuery;
+
+  const { data: weatherData } = getWeatherQuery;
+
   const onChange = (newVal: string): void => {
     setSearchValue(newVal);
   };
 
-  const handleLocation = (location: string): void => {
-    console.log({ location });
+  const handleLocation = (location: Location): void => {
+    setSelectedLocation(location.name);
+    setSearchValue('');
   };
 
   return (
@@ -27,8 +54,9 @@ export const Layout: FC<PropsWithChildren> = ({ children }): ReactElement => {
           onChange={onChange}
           searchValue={searchValue}
           handleLocation={handleLocation}
+          locations={searchValue ? data ?? [] : []}
         />
-        <Forecast />
+        <Forecast weather={weatherData} />
       </SafeAreaView>
     </View>
   )
