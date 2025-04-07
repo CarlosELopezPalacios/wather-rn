@@ -1,5 +1,6 @@
 import { useDeferredValue, useState, type FC, type PropsWithChildren, type ReactElement } from "react";
-import { Image, SafeAreaView, StatusBar, View } from "react-native";
+import { Image, StatusBar, View } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Searcher } from "../Searcher";
 import { Forecast } from "../Forecast";
 import { type Location, useGetLocationsQuery } from "../api/getLocationsEndpoint";

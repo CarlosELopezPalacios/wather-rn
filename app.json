@@ -22,6 +22,7 @@
       },
       "package": "com.carlospalaciosr15v3.methodinterview"
     },
+    "plugins": ["expo-router"],
     "web": {
       "favicon": "./assets/favicon.png"
     },
